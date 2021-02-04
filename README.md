@@ -7,3 +7,5 @@ Open source clone of the simple crypto pumps bot some dudes are selling for 500$
 
 Don't get scammed out of 500$. 
 # This shit took an hour to program.
+
+![OpenCryptBot](https://i.ibb.co/dcvC40J/sdfsdfsdf.png)
