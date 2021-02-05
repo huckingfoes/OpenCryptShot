@@ -41,6 +41,12 @@ namespace OpenCryptShot
                 config.stopLossRate = 1;
             }
 
+            if (config.limitPriceRate > 1)
+            {
+                Utilities.Write(ConsoleColor.Yellow, "Warning! limitPriceRate was over 1.0. It has been set to 1.0. This could have unwanted consequences.");
+                config.limitPriceRate = 1;
+            }
+
             try
             {
                 BinanceClient.SetDefaultOptions(new BinanceClientOptions
@@ -120,10 +126,7 @@ namespace OpenCryptShot
                         Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get symbol informations.");
                         return;
                     }
-                    
-                    //Utilities.Write(ConsoleColor.Green, $"{symbolInfo.BaseAsset} precision: {symbolInfo.BaseAssetPrecision}");
-                    //Utilities.Write(ConsoleColor.Green, $"{symbolInfo.QuoteAsset} precision: {symbolInfo.QuoteAssetPrecision}");
-                    
+
                     //Place Market Order
                     WebCallResult<BinancePlacedOrder> order = client.Spot.Order.PlaceOrder(pair, OrderSide.Buy, OrderType.Market, null, quantity);
                     if (!order.Success)
@@ -139,31 +142,21 @@ namespace OpenCryptShot
                         paidPrice = order.Data.Fills.Average(trade => trade.Price);
                     }
 
-                    Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {order.Data.Quantity} coins from {pair} at {paidPrice}");
+                    decimal orderQuantity = order.Data.Quantity;
 
-                    //Place StopLoss Order
+                    Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {orderQuantity} coins from {pair} at {paidPrice}");
+
                     decimal sellPrice = Math.Round(paidPrice * stopLossRate, 8);
                     decimal triggerPrice = Math.Round(paidPrice * limitPriceRate, 8);
-                    order = client.Spot.Order.PlaceOrder(pair, OrderSide.Sell, OrderType.StopLossLimit, order.Data.Quantity, null, null, sellPrice, TimeInForce.GoodTillCancel, triggerPrice);
-                    if (!order.Success)
-                    {
-                        Utilities.Write(ConsoleColor.Red, $"ERROR! Could not place the Stop Loss order. Error code: " + order.Error?.Message);
-                        return;
-                    }
-
-                    Utilities.Write(ConsoleColor.Green, $"Stop Loss order submitted, sell price: {sellPrice}");
-
-                    //Place LimitMaker Order
                     decimal limit = Math.Round(paidPrice * takeProfitRate, 8);
-                    order = client.Spot.Order.PlaceOrder(pair, OrderSide.Sell, OrderType.LimitMaker, order.Data.Quantity, null, null, limit, TimeInForce.GoodTillCancel);
-                    if (!order.Success)
+                    
+                    WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
+                    if (!ocoOrder.Success)
                     {
-                        Utilities.Write(ConsoleColor.Red, $"ERROR! Could not place the Limit Maker order. Error code: " + order.Error?.Message);
-                        // ReSharper disable once RedundantJumpStatement 'just in case I forget'
-                        return;
+                        Utilities.Write(ConsoleColor.Green, $"OCO Order failed, Error code: {ocoOrder.Error?.Message}");
                     }
 
-                    Utilities.Write(ConsoleColor.Green, $"Limit Maker order submitted, sell price: {limit}");
+                    Utilities.Write(ConsoleColor.Green, $"OCO Order submitted, sell price: {limit}, stop price: {triggerPrice}, stop limit price: {sellPrice}");
                 }
                 else
                 {
