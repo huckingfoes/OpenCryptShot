@@ -1,8 +1,10 @@
-# OpenCryptShot
-## Don't get scammed out of 500$. This shit took an hour to program.
-#### WARNING: THIS IS THE FIRST COMMIT OF THIS PROJECT AND IS UNTESTED. IT PROBABLY DOES NOT EVEN WORK. YET. DO NOT TEST IT WITH ANYTHING YOU'RE NOT PREPARED TO LOSE.
+Join us at [opencryptobot.xyz](http://opencryptobot.xyz) if you have any questions or need help!
 
-The open source development of the project will be centralized here as well as [in our Discord server](https://discord.gg/vJkF3cwZDy)(where you can be notified as the bot moves out of alpha testing). 
+# OpenCryptShot
+### Don't get scammed out of 500$. This shit took an hour to program.
+### WARNING: THIS IS THE FIRST COMMIT OF THIS PROJECT AND IS UNTESTED. IT PROBABLY DOES NOT EVEN WORK. YET. DO NOT TEST IT WITH ANYTHING YOU'RE NOT PREPARED TO LOSE.
+
+The open source development of the project will be centralized here as well as **[in our Discord server](https://discord.gg/vJkF3cwZDy)**, (where you can be notified as the bot moves out of alpha testing). 
 I will test and fix any bug in a few hours or days... who knows :-)
 
 Open source clone of the simple crypto pumps bot some dudes are selling for 500$
