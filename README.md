@@ -1,3 +1,5 @@
+For help or suggestions join our discord: http://opencryptobot.xyz
+
 # OpenCryptShot
 ### WARNING: THIS IS THE FIRST COMMIT OF THIS PROJECT AND IS UNTESTED. DO NOT USE.
 ### IT PROBABLY DOES NOT EVEN WORK OR COULD PLACE A BAD ORDER. REVIEW THE CODE. 
