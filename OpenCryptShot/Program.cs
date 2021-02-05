@@ -149,11 +149,11 @@ namespace OpenCryptShot
                     decimal sellPrice = Math.Round(paidPrice * stopLossRate, 8);
                     decimal triggerPrice = Math.Round(paidPrice * limitPriceRate, 8);
                     decimal limit = Math.Round(paidPrice * takeProfitRate, 8);
-                    
+
                     WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
                     if (!ocoOrder.Success)
                     {
-                        Utilities.Write(ConsoleColor.Green, $"OCO Order failed, Error code: {ocoOrder.Error?.Message}");
+                        Utilities.Write(ConsoleColor.Green, $"OCO order failed, Error code: {ocoOrder.Error?.Message}");
                     }
 
                     Utilities.Write(ConsoleColor.Green, $"OCO Order submitted, sell price: {limit}, stop price: {triggerPrice}, stop limit price: {sellPrice}");
