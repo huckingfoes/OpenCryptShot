@@ -18,8 +18,9 @@ Don't get scammed out of 500$.
 2. Open the config.json in a text editor of your choice.
 3. Enter your Binance API Key and Secret in the appropriate fields.
 4. Enter the amount of BTC you want the bot to use in 'quantity' field.
-5. In the takeProfitRate field. You must enter the desired profit multiplier. Example: 1.5 will give 50% profit, 2.0 will give 100% profit.
-6. In the stopLossRate field. You must enter the max loss multiplier. Example: 0.8 will sell at 20% loss, 0.5 will sell at 50% loss.
+5. In the 'takeProfitRate' field. You must enter the desired profit multiplier. Example: 1.5 will give 50% profit.
+6. In the 'limitPriceRate' field. You must enter the multiplier at which the sell order will execute. Example: 0.8 will execute the order at 20% under paid price.
+7. In the 'stopLossRate' field. You must enter the sell price multiplier. Example: 0.75 will sell at 25% under paid price.
 
 # How to use
 
