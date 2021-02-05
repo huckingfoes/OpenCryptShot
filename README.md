@@ -1,14 +1,12 @@
 For help or suggestions join our discord: http://opencryptobot.xyz
 
 # OpenCryptShot
-### WARNING: THIS IS THE FIRST COMMIT OF THIS PROJECT AND IS UNTESTED. DO NOT USE.
-### IT PROBABLY DOES NOT EVEN WORK OR COULD PLACE A BAD ORDER. REVIEW THE CODE. 
-#### You can follow development here, I will test and fix any bug in a few hours or days... Who knows. I'm a retard
+### WARNING: THIS IS PROJECT IS IN BETA. USE AT YOUR OWN RISK
 
 Open source clone of the simple crypto pumps bot some dudes are selling for 500$
 
 Don't get scammed out of 500$. 
-# This shit took an hour to program.
+# This shit took less than 2 hours to program. Including research.
 
 ![OpenCryptBot](https://i.ibb.co/dcvC40J/sdfsdfsdf.png)
 
@@ -31,11 +29,9 @@ Don't get scammed out of 500$.
 5. Profit! (or not)
 
 # TODO
+1. Scrape discord channels for pump and dump signals.
 
-1. Test and fix bugs.
-2. Show more informations about placed orders.
-3. Scrape discord channels for pump and dump signals.
-
+# DONATE
 ###### BTC: bc1quth38qlwg78g9s9umzvchm93t7fehftahpn8ja
 ###### ETH: 0xeE98DE621f5d16e188B93A9bdFcE5a8d61283EF7
 ###### XRP: r9LLTpcjNEjVBUtvrgSuHzirCpuDS2Rrpb
