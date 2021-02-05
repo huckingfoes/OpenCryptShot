@@ -28,3 +28,8 @@ Don't get scammed out of 500$.
 3. Type the coin symbol being pumped.
 4. Press enter.
 5. Profit! (or not)
+
+# TODO
+
+1. Test and fix bugs
+2. Scrape discord channels for pump and dump signals.
