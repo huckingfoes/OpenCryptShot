@@ -33,3 +33,6 @@ Don't get scammed out of 500$.
 
 1. Test and fix bugs
 2. Scrape discord channels for pump and dump signals.
+
+
+###### BTC: bc1quth38qlwg78g9s9umzvchm93t7fehftahpn8ja
