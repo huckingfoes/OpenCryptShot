@@ -142,7 +142,7 @@ namespace OpenCryptShot
                         paidPrice = order.Data.Fills.Average(trade => trade.Price);
                     }
 
-                    decimal orderQuantity = order.Data.Quantity;
+                    decimal orderQuantity = order.Data.QuantityFilled;
 
                     Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {orderQuantity} coins from {pair} at {paidPrice}");
 
@@ -153,7 +153,8 @@ namespace OpenCryptShot
                     WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
                     if (!ocoOrder.Success)
                     {
-                        Utilities.Write(ConsoleColor.Green, $"OCO order failed, Error code: {ocoOrder.Error?.Message}");
+                        Utilities.Write(ConsoleColor.Red, $"OCO order failed, Error code: {ocoOrder.Error?.Message}");
+                        return;
                     }
 
                     Utilities.Write(ConsoleColor.Green, $"OCO Order submitted, sell price: {limit}, stop price: {triggerPrice}, stop limit price: {sellPrice}");
