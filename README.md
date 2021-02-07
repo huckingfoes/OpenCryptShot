@@ -1,8 +1,6 @@
 Join us at [opencryptobot.xyz](http://opencryptobot.xyz) if you have any questions, suggestions or need help!
 
 # OpenCryptShot
-## Don't get scammed out of 500$. This shit took an hour to program.
-## It will be free forever.
 #### WARNING: THIS IS PROJECT IS IN BETA. USE AT YOUR OWN RISK
 
 Open source clone of the simple crypto pumps bot some dudes are selling for 500$. This shit took less than two hours to program. Including research.
