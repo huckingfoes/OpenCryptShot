@@ -5,7 +5,7 @@ Join us at [opencryptobot.xyz](http://opencryptobot.xyz) if you have any questio
 
 Open source clone of the simple crypto pumps bot some dudes are selling for 500$. This shit took less than two hours to program. Including research.
 
-The open source development of the project will be centralized here as well as **[in our Discord server](https://discord.gg/vJkF3cwZDy)**, (where you can be notified as the bot moves out of alpha testing). I will test and fix any bug in a few hours or days... who knows :-)
+The open source development of the project will be centralized here as well as **[in our Discord server](https://discord.gg/vJkF3cwZDy)**, (where you can be notified as the bot moves out of alpha testing).
 
 ![OpenCryptBot](https://i.ibb.co/dcvC40J/sdfsdfsdf.png)
 
@@ -30,13 +30,13 @@ The open source development of the project will be centralized here as well as *
 
 
 # TODO
-1. Scrape discord channels for pump and dump signals.
-
+1. GUI for ease of use.
+2. Scrape discord channels for pump and dump signals.
+3. Ability to choose between OCO order or Take Profit only.
 
 # DONATE
 ###### BTC: bc1quth38qlwg78g9s9umzvchm93t7fehftahpn8ja
 ![bc1quth38qlwg78g9s9umzvchm93t7fehftahpn8ja](https://i.imgur.com/uyU2uzP.png)
-
 
 ###### ETH: 0xeE98DE621f5d16e188B93A9bdFcE5a8d61283EF7
 ###### XRP: r9LLTpcjNEjVBUtvrgSuHzirCpuDS2Rrpb
