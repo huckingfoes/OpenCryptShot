@@ -16,6 +16,9 @@ namespace OpenCryptShot
 {
     internal static class Program
     {
+        private static BinanceClient client;
+        private static WebCallResult<BinanceExchangeInfo> exchangeInfo;
+        
         public static void Main(string[] args)
         {
             Console.Title = "OpenCryptShot";
@@ -53,7 +56,8 @@ namespace OpenCryptShot
                 {
                     ApiCredentials = new ApiCredentials(config.apiKey, config.apiSecret),
                     LogVerbosity = LogVerbosity.None,
-                    LogWriters = new List<TextWriter> {Console.Out}
+                    LogWriters = new List<TextWriter> {Console.Out},
+                    TradeRulesBehaviour = TradeRulesBehaviour.AutoComply
                 });
             }
             catch (Exception ex)
@@ -64,6 +68,14 @@ namespace OpenCryptShot
                 return;
             }
 
+            client = new BinanceClient();
+            exchangeInfo = client.Spot.System.GetExchangeInfo();
+            if (!exchangeInfo.Success)
+            {
+                Utilities.Write(ConsoleColor.Red, $"ERROR! Could not exchange informations. Error code: " + exchangeInfo.Error?.Message);
+                return;
+            }
+                
             Utilities.Write(ConsoleColor.Green, "Successfully logged in.");
 
             while (true)
@@ -105,64 +117,54 @@ namespace OpenCryptShot
 
         private static void ExecuteOrder(string symbol, decimal quantity, decimal takeProfitRate, decimal stopLossRate, decimal limitPriceRate)
         {
-            using (var client = new BinanceClient())
+            string pair = symbol.ToUpper() + "BTC";
+            WebCallResult<BinanceBookPrice> priceResult = client.Spot.Market.GetBookPrice(pair);
+            if (priceResult.Success)
             {
-                string pair = symbol.ToUpper() + "BTC";
-                WebCallResult<BinanceBookPrice> priceResult = client.Spot.Market.GetBookPrice(pair);
-                if (priceResult.Success)
+                Utilities.Write(ConsoleColor.Green, $"Price for {pair} is {priceResult.Data.BestAskPrice}");
+
+                BinanceSymbol symbolInfo = exchangeInfo.Data.Symbols.FirstOrDefault(s => s.QuoteAsset == "BTC" && s.BaseAsset == symbol.ToUpper());
+                if (symbolInfo == null)
                 {
-                    Utilities.Write(ConsoleColor.Green, $"Price for {pair} is {priceResult.Data.BestAskPrice}");
-
-                    WebCallResult<BinanceExchangeInfo> exchangeInfo = client.Spot.System.GetExchangeInfo();
-                    if (!exchangeInfo.Success)
-                    {
-                        Utilities.Write(ConsoleColor.Red, $"ERROR! Could not exchange informations. Error code: " + exchangeInfo.Error?.Message);
-                        return;
-                    }
-
-                    BinanceSymbol symbolInfo = exchangeInfo.Data.Symbols.FirstOrDefault(s => s.QuoteAsset == "BTC" && s.BaseAsset == symbol.ToUpper());
-                    if (symbolInfo == null)
-                    {
-                        Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get symbol informations.");
-                        return;
-                    }
-
-                    //Place Market Order
-                    WebCallResult<BinancePlacedOrder> order = client.Spot.Order.PlaceOrder(pair, OrderSide.Buy, OrderType.Market, null, quantity);
-                    if (!order.Success)
-                    {
-                        Utilities.Write(ConsoleColor.Red, $"ERROR! Could not place the Market order. Error code: " + order.Error?.Message);
-                        return;
-                    }
-
-                    //Get the filled order average price
-                    decimal paidPrice = 0;
-                    if (order.Data.Fills != null)
-                    {
-                        paidPrice = order.Data.Fills.Average(trade => trade.Price);
-                    }
-
-                    decimal orderQuantity = order.Data.QuantityFilled;
-
-                    Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {orderQuantity} coins from {pair} at {paidPrice}");
-
-                    decimal sellPrice = Math.Round(paidPrice * stopLossRate, 8);
-                    decimal triggerPrice = Math.Round(paidPrice * limitPriceRate, 8);
-                    decimal limit = Math.Round(paidPrice * takeProfitRate, 8);
-
-                    WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
-                    if (!ocoOrder.Success)
-                    {
-                        Utilities.Write(ConsoleColor.Red, $"OCO order failed, Error code: {ocoOrder.Error?.Message}");
-                        return;
-                    }
-
-                    Utilities.Write(ConsoleColor.Green, $"OCO Order submitted, sell price: {limit}, stop price: {triggerPrice}, stop limit price: {sellPrice}");
+                    Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get symbol informations.");
+                    return;
                 }
-                else
+
+                //Place Market Order
+                WebCallResult<BinancePlacedOrder> order = client.Spot.Order.PlaceOrder(pair, OrderSide.Buy, OrderType.Market, null, quantity);
+                if (!order.Success)
                 {
-                    Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get price for pair: {pair}. Error code: {priceResult.Error?.Message}");
+                    Utilities.Write(ConsoleColor.Red, $"ERROR! Could not place the Market order. Error code: " + order.Error?.Message);
+                    return;
                 }
+
+                //Get the filled order average price
+                decimal paidPrice = 0;
+                if (order.Data.Fills != null)
+                {
+                    paidPrice = order.Data.Fills.Average(trade => trade.Price);
+                }
+
+                decimal orderQuantity = order.Data.QuantityFilled;
+
+                Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {orderQuantity} coins from {pair} at {paidPrice}");
+
+                decimal sellPrice = paidPrice * stopLossRate;
+                decimal triggerPrice = paidPrice * limitPriceRate;
+                decimal limit = paidPrice * takeProfitRate;
+
+                WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
+                if (!ocoOrder.Success)
+                {
+                    Utilities.Write(ConsoleColor.Red, $"OCO order failed, Error code: {ocoOrder.Error?.Message}");
+                    return;
+                }
+
+                Utilities.Write(ConsoleColor.Green, $"OCO Order submitted, sell price: {limit}, stop price: {triggerPrice}, stop limit price: {sellPrice}");
+            }
+            else
+            {
+                Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get price for pair: {pair}. Error code: {priceResult.Error?.Message}");
             }
         }
     }

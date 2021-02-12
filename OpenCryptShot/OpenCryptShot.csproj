@@ -32,8 +32,8 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="Binance.Net, Version=6.6.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>..\packages\Binance.Net.6.6.4\lib\netstandard2.0\Binance.Net.dll</HintPath>
+        <Reference Include="Binance.Net, Version=6.8.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\Binance.Net.6.8.2\lib\netstandard2.0\Binance.Net.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="CryptoExchange.Net, Version=3.6.0.0, Culture=neutral, PublicKeyToken=null">
