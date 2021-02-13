@@ -122,7 +122,7 @@ namespace OpenCryptShot
             if (priceResult.Success)
             {
                 Utilities.Write(ConsoleColor.Green, $"Price for {pair} is {priceResult.Data.BestAskPrice}");
-
+                
                 BinanceSymbol symbolInfo = exchangeInfo.Data.Symbols.FirstOrDefault(s => s.QuoteAsset == "BTC" && s.BaseAsset == symbol.ToUpper());
                 if (symbolInfo == null)
                 {
@@ -130,6 +130,9 @@ namespace OpenCryptShot
                     return;
                 }
 
+                int symbolPrecision = symbolInfo.BaseAssetPrecision;
+                Utilities.Write(ConsoleColor.Green, $"Asset precision: {symbolPrecision}");
+                
                 //Place Market Order
                 WebCallResult<BinancePlacedOrder> order = client.Spot.Order.PlaceOrder(pair, OrderSide.Buy, OrderType.Market, null, quantity);
                 if (!order.Success)
@@ -149,9 +152,9 @@ namespace OpenCryptShot
 
                 Utilities.Write(ConsoleColor.Green, $"Order submitted, Got: {orderQuantity} coins from {pair} at {paidPrice}");
 
-                decimal sellPrice = paidPrice * stopLossRate;
-                decimal triggerPrice = paidPrice * limitPriceRate;
-                decimal limit = paidPrice * takeProfitRate;
+                decimal sellPrice = Math.Round(paidPrice * stopLossRate, symbolPrecision);
+                decimal triggerPrice = Math.Round(paidPrice * limitPriceRate, symbolPrecision);
+                decimal limit = Math.Round(paidPrice * takeProfitRate, symbolPrecision);
 
                 WebCallResult<BinanceOrderOcoList> ocoOrder = client.Spot.Order.PlaceOcoOrder(pair, OrderSide.Sell, orderQuantity, limit, triggerPrice, sellPrice, stopLimitTimeInForce: TimeInForce.GoodTillCancel);
                 if (!ocoOrder.Success)
