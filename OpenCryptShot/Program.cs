@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using Binance.Net;
 using Binance.Net.Enums;
 using Binance.Net.Objects.Spot;
@@ -11,6 +13,8 @@ using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.Logging;
 using CryptoExchange.Net.Objects;
 using Newtonsoft.Json;
+using OpenCryptShot.Discord;
+using System.Threading;
 
 namespace OpenCryptShot
 {
@@ -81,9 +85,23 @@ namespace OpenCryptShot
             while (true)
             {
                 //Wait for symbol input
-                Utilities.Write(ConsoleColor.Yellow, "Input symbol:");
+                Utilities.Write(ConsoleColor.Yellow, "Input symbol or Discord channel ID:");
                 Console.ForegroundColor = ConsoleColor.White;
                 string symbol = Console.ReadLine();
+
+                // if line is only digits, it's safe to assume it's a Discord channel ID.
+                if (symbol.All(c => c >= '0' && c <= '9'))
+                {
+                    string channelId = symbol;
+                    symbol = null;
+                    Console.WriteLine("Looking for symbol...");
+                    // Scrape channel every 100ms
+                    while (null == symbol)
+                    {
+                        symbol = ScrapeChannel(config.discordToken, channelId);
+                        Thread.Sleep(100);
+                    }
+                }
 
                 //Exit the program if nothing was entered
                 if (string.IsNullOrEmpty(symbol))
@@ -106,6 +124,7 @@ namespace OpenCryptShot
                     takeProfitRate = (decimal) 2.0,
                     limitPriceRate = (decimal) 0.8,
                     stopLossRate = (decimal) 0.75,
+                    discordToken = ""
                 });
                 File.WriteAllText("config.json", json);
                 Utilities.Write(ConsoleColor.Red, "config.json was missing and has been created. Please edit the file and restart the application.");
@@ -168,6 +187,54 @@ namespace OpenCryptShot
             else
             {
                 Utilities.Write(ConsoleColor.Red, $"ERROR! Could not get price for pair: {pair}. Error code: {priceResult.Error?.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Look for a symbol in the latest message of a given channel.
+        /// </summary>
+        /// <param name="discordToken">User Discord token</param>
+        /// <param name="channelId">Channel ID to scrape/param>
+        /// <returns>Returns the found symbol or null</returns>
+        private static string ScrapeChannel(string discordToken, string channelId)
+        {
+            // Look for something that starts with a '$' followed by 2 to 5 alphabetic characters.
+            Regex regex = new Regex(@"(\$)[a-zA-Z]{2,5}");
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://discord.com/api/v8/channels/" + channelId + "/messages?limit=1");
+
+                req.Headers.Add("Authorization", discordToken);
+                req.Accept = "*/*";
+                req.ContentType = "application/json";
+
+                HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+                if (res.StatusCode == HttpStatusCode.OK)
+                {
+
+                }
+                Stream dataStream = res.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string resJson = reader.ReadToEnd();
+                Message[] msg = System.Text.Json.JsonSerializer.Deserialize<Message[]>(resJson);
+                Match match = regex.Match(msg[0].content);
+                res.Close();
+                reader.Close();
+                dataStream.Close();
+                if (match.Success)
+                {
+                    // Remove '$' character
+                    return match.Value.Remove(0, 1);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (WebException ex)
+            {
+                Utilities.Write(ConsoleColor.Red, "ERROR: Could not get Discord message. Error code: " + ex.Status);
+                return null;
             }
         }
     }
