@@ -149,7 +149,10 @@ namespace OpenCryptShot
                     return;
                 }
 
-                int symbolPrecision = symbolInfo.BaseAssetPrecision;
+                int symbolPrecision = 1;
+                decimal ticksize = symbolInfo.PriceFilter.TickSize;
+                while ((ticksize = ticksize * 10) < 1)
+                    ++symbolPrecision;
                 Utilities.Write(ConsoleColor.Green, $"Asset precision: {symbolPrecision}");
                 
                 //Place Market Order
@@ -158,7 +161,7 @@ namespace OpenCryptShot
                 {
                     Utilities.Write(ConsoleColor.Red, $"ERROR! Could not place the Market order. Error code: " + order.Error?.Message);
                     return;
-                }
+                } 
 
                 //Get the filled order average price
                 decimal paidPrice = 0;
