@@ -24,7 +24,7 @@ The open source development of the project will be centralized here as well as *
 
 1. Open the program.
 2. Wait for a pump & dump signal.
-3. Type the coin symbol being pumped.
+3. Type the coin symbol being pumped or the discord channel ID you want to scrape (keep in mind that scraping is not allowed on discord, dont use your main account).
 4. Press enter.
 5. Profit! (or not)
 
